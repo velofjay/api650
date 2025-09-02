@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API-650 Tank Design Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tank_style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-industry"></i> API-650 Tank Design Calculator</h1>
+            <p>Complete Implementation of API-650 12th Edition (2013) Formulas</p>
+        </header>
+
+        <div class="calculator-sections">
+            <!-- Tank Geometry & Capacity -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ruler-combined"></i> Tank Geometry & Capacity</h2>
+                    <span class="api-ref">Annex A.4.1</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Tank Internal Diameter D (m)</label>
+                            <input type="number" id="D" value="8" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Design Liquid Height H (m)</label>
+                            <input type="number" id="H" value="12" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Specific Gravity G</label>
+                            <input type="number" id="G" value="1.0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Operating Temperature (°C)</label>
+                            <input type="number" id="operating_temperature_C" value="20" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Internal Pressure</label>
+                            <div class="pressure-input">
+                                <input type="number" id="internal_pressure" value="0" step="0.1">
+                                <select id="internal_pressure_unit">
+                                    <option value="bar">bar</option>
+                                    <option value="kPa">kPa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>External Pressure</label>
+                            <div class="pressure-input">
+                                <input type="number" id="external_pressure" value="0" step="0.1">
+                                <select id="external_pressure_unit">
+                                    <option value="bar">bar</option>
+                                    <option value="kPa">kPa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>CA Shell (mm)</label>
+                            <input type="number" id="CA_shell_capacity" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>CA Bottom Plate (mm)</label>
+                            <input type="number" id="CA_bottom" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>CA Roof (mm)</label>
+                            <input type="number" id="CA_roof" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>CA Structure (mm)</label>
+                            <input type="number" id="CA_structure" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>CA Anchor Bolt (mm)</label>
+                            <input type="number" id="CA_anchor_bolt" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>CA External Attachments (mm)</label>
+                            <input type="number" id="CA_external" value="3" step="0.1">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateCapacity()">
+                        <i class="fas fa-calculator"></i> Calculate Capacity
+                    </button>
+                    <div class="results" id="capacity_results"></div>
+                </div>
+            </div>
+
+            <!-- Shell Thickness -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-circle"></i> Shell Thickness Design</h2>
+                    <span class="api-ref">API-650 Cl.5.6</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Shell Material</label>
+                            <select id="shell_material">
+                                <option value="A36">ASTM A36</option>
+                                <option value="A36A">ASTM A36 Grade A</option>
+                                <option value="A131A">ASTM A131 Grade A</option>
+                                <option value="A131B">ASTM A131 Grade B</option>
+                                <option value="A283C">ASTM A283 Grade C</option>
+                                <option value="A285C">ASTM A285 Grade C</option>
+                                <option value="A516Gr380">ASTM A516 Grade 380</option>
+                                <option value="A516Gr415">ASTM A516 Grade 415</option>
+                                <option value="A516Gr450">ASTM A516 Grade 450</option>
+                                <option value="A516Gr485">ASTM A516 Grade 485</option>
+                                <option value="A537Cl1">ASTM A537 Class 1</option>
+                                <option value="A537Cl2">ASTM A537 Class 2</option>
+                                <option value="A573Gr400">ASTM A573 Grade 400</option>
+                                <option value="A573Gr450">ASTM A573 Grade 450</option>
+                                <option value="A573Gr485">ASTM A573 Grade 485</option>
+                                <option value="A633C">ASTM A633 Grade C</option>
+                                <option value="A633D">ASTM A633 Grade D</option>
+                                <option value="A662B">ASTM A662 Grade B</option>
+                                <option value="A662C">ASTM A662 Grade C</option>
+                                <option value="A678A">ASTM A678 Grade A</option>
+                                <option value="A678B">ASTM A678 Grade B</option>
+                                <option value="A737B">ASTM A737 Grade B</option>
+                                <option value="A841A">ASTM A841 Grade A</option>
+                                <option value="A841B">ASTM A841 Grade B</option>
+                                <option value="CSA260W">CSA G40.21 260W</option>
+                                <option value="CSA300W">CSA G40.21 300W</option>
+                                <option value="CSA350W">CSA G40.21 350W</option>
+                                <option value="S275">EN 10025 S275</option>
+                                <option value="S355">EN 10025 S355</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Number of Shell Courses (auto)</label>
+                            <input type="number" id="num_courses" min="1" max="30" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label>Plate Width (mm)</label>
+                            <input type="number" id="plate_width_mm" value="2000" step="1" min="1000" max="3000">
+                        </div>
+                        <div class="input-group">
+                            <label>Joint Efficiency E</label>
+                            <input type="number" id="joint_efficiency_E" value="1.0" step="0.05" min="0.7" max="1.0">
+                        </div>
+                        <div class="input-group">
+                            <label>Shell Corrosion Allowance (mm) [auto from Tank Geometry]</label>
+                            <input type="number" id="CA_shell" value="3" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label>Override sd (MPa) [optional]</label>
+                            <input type="number" id="sd_MPa" placeholder="auto from material">
+                        </div>
+                        <div class="input-group">
+                            <label>Override st (MPa) [optional]</label>
+                            <input type="number" id="st_MPa" placeholder="defaults to sd if blank">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateShell()">
+                        <i class="fas fa-calculator"></i> Calculate Shell Thickness
+                    </button>
+                    <div class="results" id="shell_results"></div>
+                </div>
+            </div>
+
+            <!-- Wind Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-wind"></i> Wind Analysis</h2>
+                    <span class="api-ref">API-650 Cl.5.9</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>3-sec Gust Wind Speed V (km/h)</label>
+                            <input type="number" id="V" value="150">
+                        </div>
+                        <div class="input-group">
+                            <label>Velocity Pressure Exposure Coef. Kz</label>
+                            <input type="number" id="Kz" value="1.0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Topographic Factor Kzt</label>
+                            <input type="number" id="Kzt" value="1.0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Directionality Factor Kd</label>
+                            <input type="number" id="Kd" value="0.85" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label>Importance Factor I</label>
+                            <input type="number" id="I" value="1.0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Gust Factor Gf</label>
+                            <input type="number" id="Gf" value="0.85" step="0.05">
+                        </div>
+                        <div class="input-group">
+                            <label>Top Course Thickness (mm)</label>
+                            <input type="number" id="t_top" value="6">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateWind()">
+                        <i class="fas fa-calculator"></i> Calculate Wind Effects
+                    </button>
+                    <div class="results" id="wind_results"></div>
+                </div>
+            </div>
+
+            <!-- Seismic Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-wave-square"></i> Seismic Analysis</h2>
+                    <span class="api-ref">API-650 Annex E</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Mapped Spectral Acceleration Ss (g)</label>
+                            <input type="number" id="Ss" value="0.5" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Mapped Spectral Acceleration S1 (g)</label>
+                            <input type="number" id="S1" value="0.2" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Effective Weight W_eff (N)</label>
+                            <input type="number" id="W_eff" value="500000">
+                        </div>
+                        <div class="input-group">
+                            <label>Response Modification Factor R</label>
+                            <input type="number" id="R" value="3.0" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label>Seismic Importance Factor Ie</label>
+                            <input type="number" id="Ie" value="1.0" step="0.1">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateSeismic()">
+                        <i class="fas fa-calculator"></i> Calculate Seismic Loads
+                    </button>
+                    <div class="results" id="seismic_results"></div>
+                </div>
+            </div>
+
+            <!-- Access Design -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-stairs"></i> Access Design</h2>
+                    <span class="api-ref">API-650 Tables 5.18 & 5.19</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Stair Clear Width (mm)</label>
+                            <input type="number" id="stair_clear_width" value="800">
+                        </div>
+                        <div class="input-group">
+                            <label>Stair Angle (degrees)</label>
+                            <input type="number" id="stair_angle_deg" value="35" max="50">
+                        </div>
+                        <div class="input-group">
+                            <label>Handrail Height (mm)</label>
+                            <input type="number" id="handrail_height" value="810" min="760" max="860">
+                        </div>
+                        <div class="input-group">
+                            <label>Railing Post Spacing (mm)</label>
+                            <input type="number" id="railing_post_spacing" value="2000" max="2400">
+                        </div>
+                        <div class="input-group">
+                            <label>Tread Rise (mm)</label>
+                            <input type="number" id="tread_rise" value="178">
+                        </div>
+                        <div class="input-group">
+                            <label>Tread Run (mm)</label>
+                            <input type="number" id="tread_run" value="254">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateAccess()">
+                        <i class="fas fa-calculator"></i> Check Access Requirements
+                    </button>
+                    <div class="results" id="access_results"></div>
+                </div>
+            </div>
+
+            <!-- Roof Plate Thickness -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-home"></i> Roof Plate Thickness</h2>
+                    <span class="api-ref">API-650 Cl.5.10</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Roof Type</label>
+                            <input type="text" value="Supported Roof Structure" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label>Live Load (kPa)</label>
+                            <input type="number" id="live_load_kPa" value="1.0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Snow Load (kPa)</label>
+                            <input type="number" id="snow_load_kPa" value="0.5" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Roof Material</label>
+                            <select id="roof_material">
+                                <option value="A36">ASTM A36</option>
+                                <option value="A283C">ASTM A283 Grade C</option>
+                                <option value="A285C">ASTM A285 Grade C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateRoof()">
+                        <i class="fas fa-calculator"></i> Calculate Roof Thickness
+                    </button>
+                    <div class="results" id="roof_results"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Plate Thickness -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-square"></i> Bottom Plate Thickness</h2>
+                    <span class="api-ref">API-650 Cl.5.4</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Bottom Material</label>
+                            <select id="bottom_material">
+                                <option value="A36">ASTM A36</option>
+                                <option value="A283C">ASTM A283 Grade C</option>
+                                <option value="A285C">ASTM A285 Grade C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateBottom()">
+                        <i class="fas fa-calculator"></i> Calculate Bottom Thickness
+                    </button>
+                    <div class="results" id="bottom_results"></div>
+                </div>
+            </div>
+
+            <!-- Annular Plate -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ring"></i> Annular Plate Evaluation</h2>
+                    <span class="api-ref">API-650 Cl.5.5</span>
+                </div>
+                <div class="section-content">
+                    <button class="calc-btn" onclick="calculateAnnular()">
+                        <i class="fas fa-calculator"></i> Evaluate Annular Plate Need
+                    </button>
+                    <div class="results" id="annular_results"></div>
+                </div>
+            </div>
+
+            <!-- Anchor Chairs -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-anchor"></i> Anchor Chairs Calculation</h2>
+                    <span class="api-ref">API-650 Cl.5.11</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Wind Moment (N⋅m)</label>
+                            <input type="number" id="wind_moment_Nm" value="1000000" step="1000">
+                        </div>
+                        <div class="input-group">
+                            <label>Seismic Moment (N⋅m)</label>
+                            <input type="number" id="seismic_moment_Nm" value="800000" step="1000">
+                        </div>
+                        <div class="input-group">
+                            <label>Dead Weight (N)</label>
+                            <input type="number" id="dead_weight_N" value="500000" step="1000">
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="calculateAnchors()">
+                        <i class="fas fa-calculator"></i> Calculate Anchor Requirements
+                    </button>
+                    <div class="results" id="anchor_results"></div>
+                </div>
+            </div>
+
+            <!-- Material Recommendation -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Material Selection</h2>
+                    <span class="api-ref">API-650 Tables 4.2 & 5.2</span>
+                </div>
+                <div class="section-content">
+                    <div class="inputs-grid">
+                        <div class="input-group">
+                            <label>Design Temperature (°C)</label>
+                            <input type="number" id="temperature" value="20">
+                        </div>
+                        <div class="input-group">
+                            <label>Design Pressure (bar)</label>
+                            <input type="number" id="pressure" value="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Shell Thickness (mm)</label>
+                            <input type="number" id="thickness_shell" value="10">
+                        </div>
+                        <div class="input-group">
+                            <label>Roof Thickness (mm)</label>
+                            <input type="number" id="thickness_roof" value="8">
+                        </div>
+                        <div class="input-group">
+                            <label>Bottom Thickness (mm)</label>
+                            <input type="number" id="thickness_bottom" value="6">
+                        </div>
+                        <div class="input-group">
+                            <label>Regional Standard</label>
+                            <select id="region">
+                                <option value="ASTM">ASTM (US)</option>
+                                <option value="CSA">CSA (Canada)</option>
+                                <option value="EN">EN (Europe)</option>
+                                <option value="ISO">ISO (International)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="calc-btn" onclick="recommendMaterial()">
+                        <i class="fas fa-calculator"></i> Recommend Materials
+                    </button>
+                    <div class="results" id="material_results"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Material Properties Reference -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-table"></i> API-650 Material Properties</h2>
+                <span class="api-ref">Tables 4.2 & 5.2</span>
+            </div>
+            <div class="section-content">
+                <div class="material-table" id="materials_table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material Grade</th>
+                                <th>Yield Min (MPa)</th>
+                                <th>Tensile Min (MPa)</th>
+                                <th>Max Thickness (mm)</th>
+                                <th>Allowable Stress (MPa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="materials_tbody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/tank_calculator.js') }}"></script>
+</body>
+</html>

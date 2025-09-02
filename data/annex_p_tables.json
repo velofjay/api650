@@ -1,0 +1,27 @@
+{
+  "edition": "API 650 12th 2013",
+  "notes": [
+    "This file is a scaffold to host Annex P stiffness/limit-load coefficients (Figures P.2a\u2013P.2l).",
+    "Populate with exact dimensionless coefficients from your controlled copy for production use."
+  ],
+  "coefficients_demo": [
+    {
+      "L_over_2a": 1.0,
+      "case": "shell_reinf",
+      "kF": 1.0,
+      "kM": 1.0
+    },
+    {
+      "L_over_2a": 2.0,
+      "case": "shell_reinf",
+      "kF": 0.85,
+      "kM": 0.9
+    },
+    {
+      "L_over_2a": 3.0,
+      "case": "shell_reinf",
+      "kF": 0.75,
+      "kM": 0.85
+    }
+  ]
+}
