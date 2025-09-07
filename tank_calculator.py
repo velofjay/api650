@@ -45,6 +45,44 @@ class API650Calculator:
             'S355': {'tensile_min': 490, 'tensile_max': 630, 'yield_min': 355, 'max_thickness': 50, 'S_allow': 196}
         }
 
+    # === NEW: API 650 Table 5.2a (sd, st) in MPa ===
+    # Keys match <option value> used by Shell Material dropdown.
+    STRESS_TABLE_5_2A = {
+        'A283C': (137.0, 154.0), 'A285C': (137.0, 154.0),
+        'A131A': (157.0, 171.0), 'A131B': (157.0, 171.0),
+        'A36': (160.0, 171.0),
+        'A573Gr400': (147.0, 165.0), 'A573Gr450': (160.0, 180.0), 'A573Gr485': (193.0, 208.0),
+        'A516Gr380': (137.0, 154.0), 'A516Gr415': (147.0, 165.0),
+        'A516Gr450': (160.0, 180.0), 'A516Gr485': (173.0, 195.0),
+        'A662B': (180.0, 193.0), 'A662C': (194.0, 208.0),
+        'A537Cl1': (194.0, 208.0), 'A537Cl2': (206.0, 221.0),  # upgrade to 220/236 if tr ≤ 65 mm
+        'A633C': (180.0, 193.0), 'A633D': (180.0, 193.0),      # upgrade to 194/208 if tr ≤ 65 mm
+        'A737B': (194.0, 208.0),
+        'A841A': (194.0, 208.0), 'A841B': (194.0, 208.0),
+        'CSA260W': (164.0, 176.0), 'CSA300W': (176.0, 189.0), 'CSA350W': (180.0, 193.0),
+        'S275': (164.0, 176.0), 'S355': (188.0, 201.0),
+    }
+
+    @staticmethod
+    def get_sd_st_from_blueprint(material_code: str):
+        """
+        Return (sd, st) from cad-mvp/api650_app_blueprint.json materials.tables.table_5_2a_sd_st if available.
+        Uses 'all' thickness rows for base mapping; thickness-specific upgrades are handled at runtime.
+        """
+        try:
+            with open('cad-mvp/api650_app_blueprint.json','r') as f:
+                bp = json.load(f)
+            rows = (bp.get('materials',{})
+                      .get('tables',{})
+                      .get('table_5_2a_sd_st',{})
+                      .get('rows',[]))
+            for r in rows:
+                if r.get('code') == material_code and r.get('t_range','all') == 'all':
+                    return float(r.get('sd_MPa')), float(r.get('st_MPa'))
+        except Exception:
+            pass
+        return (None, None)
+
     ANNULAR_THICKNESS = {
         12: 6, 15: 6, 18: 6, 21: 8, 24: 8, 27: 8, 30: 10, 36: 10, 42: 12, 48: 12, 60: 16
     }
@@ -376,7 +414,8 @@ def calculate_shell():
         # Get CA from capacity section if available, otherwise use local input
         CA = float(data.get('CA_shell_from_capacity', data.get('CA_shell', 3.0)))  # mm
         plate_width_mm = float(data.get('plate_width_mm', 2000.0))  # user said 2000 mm general
-        # Optional overrides for allowable stresses:
+
+        # === NEW: Optional overrides for allowable stresses:
         sd_override = data.get('sd_MPa')    # design allowable stress
         st_override = data.get('st_MPa')    # hydrotest allowable stress
         
@@ -384,41 +423,67 @@ def calculate_shell():
         plate_width_m = plate_width_mm / 1000.0
         num_courses = math.ceil(H / plate_width_m)
         
-        # Material Allowable stress
+        # === NEW: Material Allowable stresses from Table 5.2a (prefer JSON blueprint)
         mat = API650Calculator.MATERIALS.get(material, {})
         S_allow_default = mat.get('S_allow')
+
+        sd_table, st_table = API650Calculator.get_sd_st_from_blueprint(material)
+        if sd_table is None:
+            sd_table, st_table = API650Calculator.STRESS_TABLE_5_2A.get(material, (None, None))
+
+        # sd: product design stress
         if sd_override is not None:
             sd = float(sd_override)
+        elif sd_table is not None:
+            sd = float(sd_table)
         else:
-            sd = float(S_allow_default) if S_allow_default is not None else 138.0  # default to A36 conservative
-        
+            sd = float(S_allow_default) if S_allow_default is not None else 138.0  # conservative fallback
+
+        # st: hydrostatic test stress
         if st_override is not None:
             st = float(st_override)
+        elif st_table is not None:
+            st = float(st_table)
         else:
-            st = sd  # conservative same as design unless provided
-        
-        # Helper: one-foot method per course; use H_local = height to bottom of course
-        course_rows = []
-        for i in range(1, num_courses + 1):
-            # Bottom of course i is at height H_bottom = H - (i-1)*plate_width_m
-            H_local = max(H - (i - 1) * plate_width_m, 0.0)
-            # td using design allowable
-            td = (4.9 * D * 1000.0 * H_local * G) / (1000.0 * sd * E) + CA
-            # tt using hydrostatic test allowable
-            tt = (4.9 * D * 1000.0 * H_local * G) / (1000.0 * st * E) + CA
-            # required thickness tr = max(td, tt), minimum 6mm, rounded up to next even number
-            tr_raw = max(td, tt, 6.0)  # API-650 minimum 6mm
-            tr_even = math.ceil(tr_raw / 2.0) * 2.0
-            # store
-            course_rows.append({
-                'course': i,
-                'H_local_m': round(H_local, 3),
-                'sd_MPa': round(sd, 1),
-                'st_MPa': round(st, 1),
-                'td_mm': round(td, 2),
-                'tt_mm': round(tt, 2),
-                'tr_mm': int(tr_even)
-            })
+            st = float(sd)  # conservative fallback
+
+        # Helper to compute per-course thickness rows (one-foot method, consistent with existing 4.9 form)
+        def _compute_rows(sd_val, st_val):
+            rows = []
+            for i in range(1, num_courses + 1):
+                # Bottom of course i is at height H_bottom = H - (i-1)*plate_width_m
+                H_local = max(H - (i - 1) * plate_width_m, 0.0)
+                # td using design allowable
+                td = (4.9 * D * 1000.0 * H_local * G) / (1000.0 * sd_val * E) + CA
+                # tt using hydrostatic test allowable (kept same form as your original code)
+                tt = (4.9 * D * 1000.0 * H_local * G) / (1000.0 * st_val * E) + CA
+                # required thickness tr = max(td, tt), minimum 6mm, rounded up to next even number
+                tr_raw = max(td, tt, 6.0)  # API-650 minimum 6mm
+                tr_even = math.ceil(tr_raw / 2.0) * 2.0
+                rows.append({
+                    'course': i,
+                    'H_local_m': round(H_local, 3),
+                    'sd_MPa': round(sd_val, 1),
+                    'st_MPa': round(st_val, 1),
+                    'td_mm': round(td, 2),
+                    'tt_mm': round(tt, 2),
+                    'tr_mm': int(tr_even)
+                })
+            return rows
+
+        # First pass with base sd/st
+        course_rows = _compute_rows(sd, st)
+
+        # === NEW: Thickness-dependent upgrade per 5.2a for certain grades
+        if material in ('A537Cl2', 'A633C', 'A633D'):
+            max_tr = max(r['tr_mm'] for r in course_rows) if course_rows else 0
+            if max_tr <= 65:
+                # Upgrade sd/st when required thickness is within thinner band
+                if material == 'A537Cl2':
+                    sd, st = 220.0, 236.0
+                else:  # A633C/D
+                    sd, st = 194.0, 208.0
+                course_rows = _compute_rows(sd, st)
         
         # Maximum hoop stress at bottom course using hydrostatic head H
         # p (MPa) = 0.00980665 * G * H; sigma = p*D/(2*t)
@@ -439,7 +504,8 @@ def calculate_shell():
             'notes': [
                 "Number of Shell Courses = ceil(H / plate width). Default plate width 2000 mm.",
                 "td = design thickness (one-foot method), tt = hydrostatic test thickness. tr = max(td, tt), rounded to next even mm.",
-                "CA taken from Tank Geometry & Capacity section."
+                "CA taken from Tank Geometry & Capacity section.",
+                "sd/st per API 650 Table 5.2a; A537Cl2 and A633C/D upgraded when tr ≤ 65 mm."
             ]
         })
     except Exception as e:

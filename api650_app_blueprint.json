@@ -1029,6 +1029,252 @@
           "Table 4.3a/4.3b (material groups)",
           "Table 4.5a/4.5b (minimum impact test requirements)"
         ]
+      },
+      "table_5_2a_sd_st": {
+        "unit_system": "SI",
+        "columns": [
+          "spec",
+          "code",
+          "grade",
+          "t_range",
+          "sd_MPa",
+          "st_MPa"
+        ],
+        "rows": [
+          {
+            "spec": "ASTM A283M",
+            "code": "A283C",
+            "grade": "C",
+            "t_range": "all",
+            "sd_MPa": 137,
+            "st_MPa": 154
+          },
+          {
+            "spec": "ASTM A285M",
+            "code": "A285C",
+            "grade": "C",
+            "t_range": "all",
+            "sd_MPa": 137,
+            "st_MPa": 154
+          },
+          {
+            "spec": "ASTM A131M",
+            "code": "A131A",
+            "grade": "A",
+            "t_range": "all",
+            "sd_MPa": 157,
+            "st_MPa": 171
+          },
+          {
+            "spec": "ASTM A131M",
+            "code": "A131B",
+            "grade": "B",
+            "t_range": "all",
+            "sd_MPa": 157,
+            "st_MPa": 171
+          },
+          {
+            "spec": "ASTM A36M",
+            "code": "A36",
+            "grade": "\u2014",
+            "t_range": "all",
+            "sd_MPa": 160,
+            "st_MPa": 171
+          },
+          {
+            "spec": "ASTM A573M",
+            "code": "A573Gr400",
+            "grade": "400",
+            "t_range": "all",
+            "sd_MPa": 147,
+            "st_MPa": 165
+          },
+          {
+            "spec": "ASTM A573M",
+            "code": "A573Gr450",
+            "grade": "450",
+            "t_range": "all",
+            "sd_MPa": 160,
+            "st_MPa": 180
+          },
+          {
+            "spec": "ASTM A573M",
+            "code": "A573Gr485",
+            "grade": "485",
+            "t_range": "all",
+            "sd_MPa": 193,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A516M",
+            "code": "A516Gr380",
+            "grade": "380",
+            "t_range": "all",
+            "sd_MPa": 137,
+            "st_MPa": 154
+          },
+          {
+            "spec": "ASTM A516M",
+            "code": "A516Gr415",
+            "grade": "415",
+            "t_range": "all",
+            "sd_MPa": 147,
+            "st_MPa": 165
+          },
+          {
+            "spec": "ASTM A516M",
+            "code": "A516Gr450",
+            "grade": "450",
+            "t_range": "all",
+            "sd_MPa": 160,
+            "st_MPa": 180
+          },
+          {
+            "spec": "ASTM A516M",
+            "code": "A516Gr485",
+            "grade": "485",
+            "t_range": "all",
+            "sd_MPa": 173,
+            "st_MPa": 195
+          },
+          {
+            "spec": "ASTM A662M",
+            "code": "A662B",
+            "grade": "B",
+            "t_range": "all",
+            "sd_MPa": 180,
+            "st_MPa": 193
+          },
+          {
+            "spec": "ASTM A662M",
+            "code": "A662C",
+            "grade": "C",
+            "t_range": "all",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A537M",
+            "code": "A537Cl1",
+            "grade": "Class 1",
+            "t_range": "all",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A537M",
+            "code": "A537Cl2",
+            "grade": "Class 2",
+            "t_range": "t <= 65",
+            "sd_MPa": 220,
+            "st_MPa": 236
+          },
+          {
+            "spec": "ASTM A537M",
+            "code": "A537Cl2_t65_100",
+            "grade": "Class 2",
+            "t_range": "65 < t <= 100",
+            "sd_MPa": 206,
+            "st_MPa": 221
+          },
+          {
+            "spec": "ASTM A633M",
+            "code": "A633C",
+            "grade": "C",
+            "t_range": "t <= 65",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A633M",
+            "code": "A633C_t65_100",
+            "grade": "C",
+            "t_range": "65 < t <= 100",
+            "sd_MPa": 180,
+            "st_MPa": 193
+          },
+          {
+            "spec": "ASTM A633M",
+            "code": "A633D",
+            "grade": "D",
+            "t_range": "t <= 65",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A633M",
+            "code": "A633D_t65_100",
+            "grade": "D",
+            "t_range": "65 < t <= 100",
+            "sd_MPa": 180,
+            "st_MPa": 193
+          },
+          {
+            "spec": "ASTM A737M",
+            "code": "A737B",
+            "grade": "B",
+            "t_range": "all",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A841M",
+            "code": "A841A",
+            "grade": "Class 1 (A)",
+            "t_range": "all",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "ASTM A841M",
+            "code": "A841B",
+            "grade": "Class 1 (B)",
+            "t_range": "all",
+            "sd_MPa": 194,
+            "st_MPa": 208
+          },
+          {
+            "spec": "CSA G40.21M",
+            "code": "CSA260W",
+            "grade": "260W",
+            "t_range": "all",
+            "sd_MPa": 164,
+            "st_MPa": 176
+          },
+          {
+            "spec": "CSA G40.21M",
+            "code": "CSA300W",
+            "grade": "300W",
+            "t_range": "all",
+            "sd_MPa": 176,
+            "st_MPa": 189
+          },
+          {
+            "spec": "CSA G40.21M",
+            "code": "CSA350W",
+            "grade": "350W",
+            "t_range": "all",
+            "sd_MPa": 180,
+            "st_MPa": 193
+          },
+          {
+            "spec": "EN 10025",
+            "code": "S275",
+            "grade": "S275 (J0/J2)",
+            "t_range": "<=16 & 16<t<=40 mapped",
+            "sd_MPa": 164,
+            "st_MPa": 176
+          },
+          {
+            "spec": "EN 10025",
+            "code": "S355",
+            "grade": "S355 (J0/J2/K2)",
+            "t_range": "<=16/40/50 mapped",
+            "sd_MPa": 188,
+            "st_MPa": 201
+          }
+        ],
+        "source": "API 650 Table 5.2a (images provided)"
       }
     },
     "selection_rules": {
@@ -1054,7 +1300,35 @@
         "checks_passed",
         "required_tests_or_treatments"
       ]
-    }
+    },
+    "shell_material_options_5_2a": [
+      "A283C",
+      "A285C",
+      "A131A",
+      "A131B",
+      "A36",
+      "A573Gr400",
+      "A573Gr450",
+      "A573Gr485",
+      "A516Gr380",
+      "A516Gr415",
+      "A516Gr450",
+      "A516Gr485",
+      "A662B",
+      "A662C",
+      "A537Cl1",
+      "A537Cl2",
+      "A633C",
+      "A633D",
+      "A737B",
+      "A841A",
+      "A841B",
+      "CSA260W",
+      "CSA300W",
+      "CSA350W",
+      "S275",
+      "S355"
+    ]
   },
   "functions": [
     {
